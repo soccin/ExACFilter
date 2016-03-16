@@ -14,7 +14,6 @@ PERL=/opt/common/CentOS_6-dev/perl/perl-5.22.0/bin/perl
 VCF2MAF=/opt/common/CentOS_6-dev/vcf2maf/v1.6.5
 VEPPATH=/opt/common/CentOS_6/vep/v83
 MSK_ISOFORMS=$VCF2MAF/data/isoform_overrides_at_mskcc
-
 GENOME=/ifs/depot/assemblies/H.sapiens/b37/b37.fasta
 GENOMEFAI=/ifs/depot/assemblies/H.sapiens/b37/b37.fasta.fai
 
@@ -42,12 +41,18 @@ fi
 INPUT_MAF=$1
 OUTPUT_MAF=$2
 
-##
+#
 # Get a uniq temp directory for scratch
+#
 
 TDIR=_scratch_$(uuidgen -t)
-
 mkdir -p $TDIR
+
+#
+# Make a temp symlink of genome to deal with BIOPERL's
+# directory permissions problems.
+#
+
 ln -s $GENOME $TDIR/$(basename $GENOME)
 ln -s ${GENOME}.fai $TDIR/$(basename $GENOME).fai
 
