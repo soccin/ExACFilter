@@ -38,17 +38,19 @@ with open(TITLEFILE) as fp:
         sampleClassDb[r["Sample_ID"]]=r["Class"]
 
 infp=skipComments(open(IN_MAF))
-outfp=open(OUT_MAF,"wb")
 
-cin=csv.DictReader(infp,delimiter="\t")
-cout=csv.DictWriter(outfp,fieldnames=PORTAL_MAF_COLS,
-                    delimiter="\t",lineterminator='\n')
-cout.writeheader()
+with open(OUT_MAF,"wb") as outfp:
 
-for r in cin:
-    if r["FILTER"] == "common_variant" and not matchedNormal(r):
-        print "FILTERED", r["FILTER"], r["Tumor_Sample_Barcode"], r["Matched_Norm_Sample_Barcode"]
-        continue
+    cin=csv.DictReader(infp,delimiter="\t")
+    cout=csv.DictWriter(outfp,fieldnames=PORTAL_MAF_COLS,
+                        delimiter="\t",lineterminator='\n')
+    cout.writeheader()
 
-    rOut={k: r[k] for k in PORTAL_MAF_COLS}
-    cout.writerow(rOut)
+    for r in cin:
+        if r["FILTER"] == "common_variant" and not matchedNormal(r):
+            print "FILTERED", r["FILTER"], r["Tumor_Sample_Barcode"], r["Matched_Norm_Sample_Barcode"]
+            continue
+
+        rOut={k: r[k] for k in PORTAL_MAF_COLS}
+        cout.writerow(rOut)
+
