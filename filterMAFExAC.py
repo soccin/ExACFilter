@@ -48,7 +48,10 @@ with open(OUT_MAF,"wb") as outfp:
 
     for r in cin:
         if r["FILTER"] == "common_variant" and not matchedNormal(r):
-            print "FILTERED", r["FILTER"], r["Tumor_Sample_Barcode"], r["Matched_Norm_Sample_Barcode"]
+            print "FILTERED", r["FILTER"], r["Tumor_Sample_Barcode"],
+            print r["Matched_Norm_Sample_Barcode"], r["Chromosome"],
+            print r["Start_Position"], r["Reference_Allele"],
+            print r["Tumor_Seq_Allele2"]
             continue
 
         rOut={k: r[k] for k in PORTAL_MAF_COLS}
