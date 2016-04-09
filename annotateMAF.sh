@@ -20,7 +20,7 @@ PERL=/opt/common/CentOS_6-dev/perl/perl-5.22.0/bin/perl
 VEPPATH=/opt/common/CentOS_6/vep/v83
 MSK_ISOFORMS=$VCF2MAF/data/isoform_overrides_at_mskcc
 
-DEBUG="Yes"
+DEBUG="No"
 while getopts "dh" opt; do
 	case $opt in
 		d)
@@ -61,11 +61,7 @@ esac
 # Get a uniq temp directory for scratch
 #
 
-if [ "$DEBUG" == "No" ]; then
-	TDIR=.scratch_annotateMAF_$(uuidgen -t)
-else
-	TDIR=_scratch_annotateMAF_$(uuidgen -t)
-fi
+TDIR=_scratch_annotateMAF_$(uuidgen -t)
 mkdir -p $TDIR
 
 #
