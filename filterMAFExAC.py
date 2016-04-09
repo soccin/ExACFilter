@@ -42,8 +42,7 @@ infp=skipComments(open(IN_MAF))
 with open(OUT_MAF,"wb") as outfp:
 
     cin=csv.DictReader(infp,delimiter="\t")
-    cout=csv.DictWriter(outfp,fieldnames=PORTAL_MAF_COLS,
-                        delimiter="\t",lineterminator='\n')
+    cout=csv.DictWriter(outfp,fieldnames=PORTAL_MAF_COLS,delimiter="\t",lineterminator='\n')
     cout.writeheader()
 
     for r in cin:
