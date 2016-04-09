@@ -38,7 +38,7 @@ with open(OUT_MAF,"wb") as outfp:
     cout.writeheader()
 
     for r in cin:
-        if r["FILTER"] == "common_variant":
+        if r["FILTER"].find("common_variant")>-1:
             r["exac_filter"]="TRUE"
 
             if not matchedNormal(r):
