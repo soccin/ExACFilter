@@ -3,13 +3,15 @@
 import sys
 import csv
 
-from portalMAFColumns import PORTAL_MAF_COLS
-
 if len(sys.argv) != 4:
-    print >>sys.stderr, "usage: filterMAFExAC.py TITLEFILE IN_MAF OUT_MAF"
+    print >>sys.stderr, "usage: filterMAFExAC.py ORIG_MAF IN_MAF OUT_MAF"
     sys.exit(1)
 
-TITLEFILE=sys.argv[1]
+#
+# Use ORIG_MAF to get the columns to use for output MAF
+#
+
+ORIG_MAF=sys.argv[1]
 IN_MAF=sys.argv[2]
 OUT_MAF=sys.argv[3]
 
@@ -19,40 +21,45 @@ def skipComments(fp,commentChar="#"):
             yield line
 
 def matchedNormal(r):
-    normalClass=sampleClassDb[r["Matched_Norm_Sample_Barcode"]]
-    if normalClass=="PoolNormal":
-        return False
-    elif normalClass=="Normal":
-        return True
-    else:
-        print >>sys.stderr, "ERROR: Invalid Normal Class Value =",normalClass
-        print >>sys.stderr, "    Sample =", r["Matched_Norm_Sample_Barcode"]
-        print >>sys.stderr, "    MAF rec =", r
-        print >>sys.stderr
-        raise ValueError("Invalid Normal Class Value")
+    return r["Mutation_Status"]=="SOMATIC"
 
-sampleClassDb=dict()
-with open(TITLEFILE) as fp:
-    tin=csv.DictReader(fp,delimiter="\t")
-    for r in tin:
-        sampleClassDb[r["Sample_ID"]]=r["Class"]
+origCols=skipComments(open(ORIG_MAF)).next().strip().split("\t")
 
 infp=skipComments(open(IN_MAF))
-
 with open(OUT_MAF,"wb") as outfp:
 
     cin=csv.DictReader(infp,delimiter="\t")
-    cout=csv.DictWriter(outfp,fieldnames=PORTAL_MAF_COLS,delimiter="\t",lineterminator='\n')
+    outCols=origCols+["Redaction_Source", "exac_filter"]
+    if "Redaction_Source" not in origCols:
+        outCols=origCols+["Redaction_Source", "exac_filter"]
+    else:
+        outCols=origCols+["exac_filter"]
+    cout=csv.DictWriter(outfp,fieldnames=outCols,delimiter="\t",lineterminator='\n')
     cout.writeheader()
 
     for r in cin:
-        if r["FILTER"] == "common_variant" and not matchedNormal(r):
-            print "FILTERED", r["FILTER"], r["Tumor_Sample_Barcode"],
-            print r["Matched_Norm_Sample_Barcode"], r["Chromosome"],
-            print r["Start_Position"], r["Reference_Allele"],
-            print r["Tumor_Seq_Allele2"]
-            continue
+        if r["FILTER"] == "common_variant":
+            r["exac_filter"]="TRUE"
 
-        rOut={k: r[k] for k in PORTAL_MAF_COLS}
+            if not matchedNormal(r):
+                print "FILTERED", r["FILTER"], r["Tumor_Sample_Barcode"],
+                print r["Matched_Norm_Sample_Barcode"], r["Chromosome"],
+                print r["Start_Position"], r["Reference_Allele"],
+                print r["Tumor_Seq_Allele2"]
+
+                r["Validation_Status"]="REDACTED"
+                if "Redaction_Source" in origCols:
+                    r["Redaction_Source"]=r["Redaction_Source"]+","+"exact_filter_v1"
+                else:
+                    r["Redaction_Source"]="exact_filter_v1"
+
+            else:
+                if "Redaction_Source" not in origCols:
+                    r["Redaction_Source"]=""
+        else:
+            r["exac_filter"]="FALSE"
+            if "Redaction_Source" not in origCols:
+                r["Redaction_Source"]=""
+
+        rOut={k: r[k] for k in outCols}
         cout.writerow(rOut)
-
