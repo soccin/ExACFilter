@@ -42,11 +42,6 @@ with open(OUT_MAF,"wb") as outfp:
             r["exac_filter"]="TRUE"
 
             if not matchedNormal(r):
-                print "FILTERED", r["FILTER"], r["Tumor_Sample_Barcode"],
-                print r["Matched_Norm_Sample_Barcode"], r["Chromosome"],
-                print r["Start_Position"], r["Reference_Allele"],
-                print r["Tumor_Seq_Allele2"]
-
                 r["Validation_Status"]="REDACTED"
                 if "Redaction_Source" in origCols:
                     r["Redaction_Source"]=r["Redaction_Source"]+","+"exact_filter_v1"
@@ -56,6 +51,7 @@ with open(OUT_MAF,"wb") as outfp:
             else:
                 if "Redaction_Source" not in origCols:
                     r["Redaction_Source"]=""
+
         else:
             r["exac_filter"]="FALSE"
             if "Redaction_Source" not in origCols:
