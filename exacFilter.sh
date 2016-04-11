@@ -40,8 +40,7 @@ OUTPUT_MAF=$3
 
 case $GENOME in
 	b37)
-		GENOME=/ifs/depot/assemblies/H.sapiens/b37/b37.fasta
-		GENOMEFAI=/ifs/depot/assemblies/H.sapiens/b37/b37.fasta.fai
+
 		;;
 	*)
 		echo "Invalid Genome" $GENOME
