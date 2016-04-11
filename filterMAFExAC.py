@@ -25,13 +25,15 @@ def matchedNormal(r):
 
 origCols=skipComments(open(ORIG_MAF)).next().strip().split("\t")
 
+REDACTION_SOURCE="REDACTION_SOURCE"
+
 infp=skipComments(open(IN_MAF))
 with open(OUT_MAF,"wb") as outfp:
 
     cin=csv.DictReader(infp,delimiter="\t")
-    outCols=origCols+["Redaction_Source", "exac_filter"]
-    if "Redaction_Source" not in origCols:
-        outCols=origCols+["Redaction_Source", "exac_filter"]
+    outCols=origCols+[REDACTION_SOURCE, "exac_filter"]
+    if REDACTION_SOURCE not in origCols:
+        outCols=origCols+[REDACTION_SOURCE, "exac_filter"]
     else:
         outCols=origCols+["exac_filter"]
     cout=csv.DictWriter(outfp,fieldnames=outCols,delimiter="\t",lineterminator='\n')
@@ -43,19 +45,19 @@ with open(OUT_MAF,"wb") as outfp:
 
             if not matchedNormal(r):
                 r["Validation_Status"]="REDACTED"
-                if "Redaction_Source" in origCols:
-                    r["Redaction_Source"]=r["Redaction_Source"]+","+"exact_filter_v1"
+                if REDACTION_SOURCE in origCols:
+                    r[REDACTION_SOURCE]=r[REDACTION_SOURCE]+","+"exact_filter_v1"
                 else:
-                    r["Redaction_Source"]="exact_filter_v1"
+                    r[REDACTION_SOURCE]="exact_filter_v1"
 
             else:
-                if "Redaction_Source" not in origCols:
-                    r["Redaction_Source"]=""
+                if REDACTION_SOURCE not in origCols:
+                    r[REDACTION_SOURCE]=""
 
         else:
             r["exac_filter"]="FALSE"
-            if "Redaction_Source" not in origCols:
-                r["Redaction_Source"]=""
+            if REDACTION_SOURCE not in origCols:
+                r[REDACTION_SOURCE]=""
 
         rOut={k: r[k] for k in outCols}
         cout.writerow(rOut)
