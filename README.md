@@ -1,5 +1,14 @@
 # exacFilter.sh
 
+## Usage:
+
+```
+exacFilter.sh [-d] GENOME INPUT.MAF OUTPUT.MAF
+    -d turn on debug mode
+```
+
+Currently the only supported genome is b37. Turning on debug mode keeps temporary files from being deleted. 
+
 ## Summary
 
 Filter (flag) common variants using the currated ExAC database. This script takes in a MAF and will add two columns additional columns:
@@ -26,11 +35,4 @@ Validation_Status | Mutation_Status | Redaction_Source | exac_filter
  | SOMATIC_VS_POOL |  | FALSE
 REDACTED | SOMATIC_VS_POOL | exact_filter_v1 | TRUE
 
-## Usage:
 
-```
-exacFilter.sh [-d] GENOME INPUT.MAF OUTPUT.MAF
-    -d turn on debug mode
-```
-
-Currently the only supported genome is b37. Turning on debug mode keeps temporary files from being deleted. 
