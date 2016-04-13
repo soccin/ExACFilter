@@ -35,4 +35,11 @@ Validation_Status | Mutation_Status | Redaction_Source | exac_filter
  | SOMATIC_VS_POOL |  | FALSE
 REDACTED | SOMATIC_VS_POOL | exact_filter_v1 | TRUE
 
+__N.B.__, fillOut rows, those are rows with
+
+```bash
+	Mutation_Status == "NONE"
+```
+
+are marked as TRUE/FALSE but are __not__ ever redacted. Note this is really correct; they should be redacted or not based on the event that generated them. Not easily done when processing a MAF; would need a two pass method. Leave as is for now. 
 
