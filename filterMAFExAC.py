@@ -21,7 +21,18 @@ def skipComments(fp,commentChar="#"):
             yield line
 
 def matchedNormal(r):
-    return r["Mutation_Status"]=="SOMATIC"
+    if r["Mutation_Status"]=="SOMATIC":
+        return True
+    elif r["Mutation_Status"]=="SOMATIC_VS_POOL":
+        return False
+    else:
+        print >>sys.stderr, "ERROR: filterMAFExAC.py"
+        print >>sys.stderr, "    Unknown validation status [%s]" % (r["Mutation_Status"])
+        print >>sys.stderr, "   ",r["Chromosome"], r["Start_Position"],
+        print >>sys.stderr, r["Reference_Allele"],r["Tumor_Seq_Allele2"],
+        print >>sys.stderr, r["Tumor_Sample_Barcode"]
+        print >>sys.stderr
+        sys.exit(1)
 
 origCols=skipComments(open(ORIG_MAF)).next().strip().split("\t")
 
@@ -40,10 +51,14 @@ with open(OUT_MAF,"wb") as outfp:
     cout.writeheader()
 
     for r in cin:
+
         if r["FILTER"].find("common_variant")>-1:
             r["exac_filter"]="TRUE"
 
-            if not matchedNormal(r):
+            # r["Mutation_Status"]=="NONE" means FILLOUT ROW
+            # Do not redact these either just mark
+
+            if r["Mutation_Status"]!="NONE" and not matchedNormal(r):
                 r["Validation_Status"]="REDACTED"
                 if REDACTION_SOURCE in origCols:
                     r[REDACTION_SOURCE]=r[REDACTION_SOURCE]+","+"exact_filter_v1"
