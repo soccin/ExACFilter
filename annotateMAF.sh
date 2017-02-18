@@ -17,7 +17,7 @@ function usage {
 
 VCF2MAF=/opt/common/CentOS_6/vcf2maf/v1.6.6
 PERL=/opt/common/CentOS_6/perl/perl-5.22.0/bin/perl
-VEPPATH=/opt/common/CentOS_6/vep/v83
+VEPPATH=/opt/common/CentOS_6/vep/v84
 MSK_ISOFORMS=$VCF2MAF/data/isoform_overrides_at_mskcc
 
 TABIX_PATH=$(which tabix 2>/dev/null)
